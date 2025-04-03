@@ -150,9 +150,17 @@
                 // If cookie doesn't exist, generate a new one and set it
                 var newAdTrackId = generateUUID();
                 setCookie(cookieName, newAdTrackId, 365);
-                // Send the new ad_track_id to the server
-                sendAdTrackIdToServer(newAdTrackId);
             }
+
+            var adTrackId = getCookie('ad_track_id');  // Get the cookie value
+
+            if (adTrackId) {
+                document.getElementById('adTrackInput').value = adTrackId;  // Set the input field value
+            }
+
+            var newAdTrackId = getCookie('ad_track_id');  // Get the cookie value again
+
+            sendAdTrackIdToServer(newAdTrackId);
         }
 
         // Function to get the value of a cookie by name
@@ -169,15 +177,6 @@
 
         // Call function to check and set ad_track_id cookie
         checkAndSetAdTrackCookie();
-
-        // Set the value of the input field with the 'ad_track_id' cookie (if it exists)
-        window.onload = function() {
-            var adTrackId = getCookie('ad_track_id');  // Get the cookie value
-
-            if (adTrackId) {
-                document.getElementById('adTrackInput').value = adTrackId;  // Set the input field value
-            }
-        };
     </script>
 
 </body>

@@ -13,7 +13,7 @@ class AdTrackController extends Controller
         // Check if the ad_track_id already exists in the database
         $existingAdTrack = AdsTrack::where('ad_track_id', $adTrackId)->first();
 
-        if (!$existingAdTrack) {
+        if (!$existingAdTrack){
             // If the ad_track_id doesn't exist, create a new record
             AdsTrack::create([
                 'ad_track_id' => $adTrackId,
@@ -22,6 +22,10 @@ class AdTrackController extends Controller
                 'clicks' => 1, // Initialize clicks to 1
             ]);
 
+            return;
+        } else {
+            // If it exists, increment the clicks count
+            $existingAdTrack->increment('clicks');
             return;
         }
     }
