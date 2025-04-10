@@ -12,6 +12,15 @@
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16892671741">
+        </script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'AW-16892671741');
+        </script>
     </head>
 <body class="bg-gray-100 flex flex-col justify-center items-center min-h-screen p-4">
 
