@@ -4,45 +4,52 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class LoginController extends Controller
 {
     public function login(Request $request)
     {
-
         $request->validate([
             'password' => 'required|string',
         ]);
-        
-        // Check if the password matches the environment variable
-        
-        if ($request->password == env('ADMIN_PASSWORD')) {
 
-            // Check if the user exists
-            $user = User::first();
-            if (!$user) {
-                // If no user exists, create a new user
-                $user = User::create([
-                    'name' => 'GWM Nepal',
-                    'email' => 'admin@gwmnepal.com.np',
-                    'password' => bcrypt($request->password),
-                ]);
+        $adminPassword = env('ADMIN_PASSWORD');
 
-                Auth::login($user);
+        // Check if ADMIN_PASSWORD is configured
+        if ($adminPassword === null) {
+            abort(500, 'Admin password not configured.');
+        }
 
-                return redirect()->route('admin');
+        // Securely compare input with the environment password
+        if (!hash_equals($adminPassword, $request->password)) {
+            session()->flash('error', 'Invalid password.');
+            return redirect()->back();
+        }
 
-            } else {
-                // If user exists, log them in
-                Auth::login($user);
-                return redirect()->route('admin');
+        // Define admin email to ensure uniqueness
+        $adminEmail = 'admin@gwmnepal.com.np';
+
+        // Find or create the admin user
+        $user = User::where('email', $adminEmail)->first();
+
+        if (!$user) {
+            $user = User::create([
+                'name' => 'GWM Nepal',
+                'email' => $adminEmail,
+                'password' => bcrypt($adminPassword),
+            ]);
+        } else {
+            // Update password if it doesn't match the current env password
+            if (!Hash::check($adminPassword, $user->password)) {
+                $user->password = bcrypt($adminPassword);
+                $user->save();
             }
         }
 
-        session()->flash('error', 'Invalid password.');
-        
-        return redirect()->back();
+        Auth::login($user);
+
+        return redirect()->route('admin');
     }
-    
 }
